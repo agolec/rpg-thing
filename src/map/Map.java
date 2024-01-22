@@ -13,15 +13,13 @@ public class Map {
 
     private final int GRID_BORDER_OFFSET = 2;
     private final int SPRITE_PLACEMENT_OFFSET = 1;
-//    public Map(int rows,int columns,List<Entity> entities){
-//        this.mapRows = rows + GRID_OFFSET;
-//        this.mapColumns = columns + GRID_OFFSET;
-//        this.RIGHT_COLUMN = mapColumns - 1;
-//        this.BOTTOM_ROW = mapRows - 1;
-//        this.grid = new char[mapRows][mapColumns];
-//        this.existingEntities = new ArrayList<Entity>(entities);
-//        initializeMap();
-//    }
+    public Map(int rows,int columns,List<Entity> entities){
+        this.mapRows = rows + BORDER_SIZE;
+        this.mapColumns = columns + BORDER_SIZE;
+        this.grid = new char[mapRows][mapColumns];
+        this.existingEntities = new ArrayList<Entity>(entities);
+        initializeMap();
+    }
     public Map(int rows,int columns){
         this.mapRows = rows + BORDER_SIZE;
         this.mapColumns = columns + BORDER_SIZE;
@@ -80,9 +78,6 @@ public class Map {
         } else {
             System.out.println("Invalid position. Select another space.");
         }
-    }
-    public void forcePlaceEntity(Entity entity, int d, int r){
-        placeSpriteOnGrid(entity);
     }
 
     private void placeSpriteOnGrid(Entity entity) {

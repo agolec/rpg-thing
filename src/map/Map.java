@@ -9,7 +9,9 @@ public class Map {
     private char[][] grid;
     private int mapRows;
     private int mapColumns;
+
     private Entity[][] entitiesOnGrid;
+
 
     private final int GRID_BORDER_OFFSET = 2;
     private final int SPRITE_PLACEMENT_OFFSET = 1;

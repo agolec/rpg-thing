@@ -9,7 +9,9 @@ public class Map {
     private char[][] grid;
     private int mapRows;
     private int mapColumns;
-    private List<Entity> existingEntities;
+
+    private Entity[][] entitiesOnGrid;
+
 
     private final int GRID_BORDER_OFFSET = 2;
     private final int SPRITE_PLACEMENT_OFFSET = 1;
@@ -17,14 +19,13 @@ public class Map {
         this.mapRows = rows + BORDER_SIZE;
         this.mapColumns = columns + BORDER_SIZE;
         this.grid = new char[mapRows][mapColumns];
-        this.existingEntities = new ArrayList<Entity>(entities);
         initializeMap();
     }
     public Map(int rows,int columns){
         this.mapRows = rows + BORDER_SIZE;
         this.mapColumns = columns + BORDER_SIZE;
         this.grid = new char[mapRows][mapColumns];
-        this.existingEntities = new ArrayList<Entity>();
+        this.entitiesOnGrid = new Entity[mapRows][mapColumns];
         initializeMap();
     }
 
@@ -96,6 +97,6 @@ public class Map {
     }
 
     private void addEntity(Entity entityToPlace) {
-        this.existingEntities.add(entityToPlace);
+        this.entitiesOnGrid[entityToPlace.getEntityColumnPosition()][entityToPlace.getEntityColumnPosition()] = entityToPlace;
     }
 }

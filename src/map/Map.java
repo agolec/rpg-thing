@@ -86,17 +86,46 @@ public class Map {
     }
 
     private boolean canPlaceEntityOnMap(Entity entityToPlace,int desiredRowPosition,int desiredColumnPosition) {
-        final int MAX_GRID_ROW = this.mapRows - 1;
-        final int MAX_GRID_COLUMN = this.mapColumns - 1;
-        if(desiredRowPosition < 1 || desiredRowPosition > MAX_GRID_ROW - 1){
+        final int MAX_GRID_ROW = this.mapRows - BORDER_SIZE;
+        final int MAX_GRID_COLUMN = this.mapColumns - BORDER_SIZE;
+
+        //use column and row position of the entity we are trying to place, to get the row and column we should check on the grid.
+        int existingEntityColumn = entityToPlace.getEntityColumnPosition();
+        int existingEntityRow = entityToPlace.getEntityRowPosition();
+        if(desiredRowPosition < 1 || desiredRowPosition > MAX_GRID_ROW){
             return false;
-        } else if (desiredColumnPosition < 1 || desiredColumnPosition > MAX_GRID_COLUMN - 1){
+        } else if (desiredColumnPosition < 1 || desiredColumnPosition > MAX_GRID_COLUMN){
             return false;
         }
-        return true;
+
+        if(entitiesOnGrid[existingEntityColumn][existingEntityRow] != null){
+            //if an entity exists on the entitiesOnGrid at the position where
+            if(entitiesOnGrid[existingEntityColumn][existingEntityRow].canEntityCollide() || entityToPlace.canEntityCollide()){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+
     }
 
     private void addEntity(Entity entityToPlace) {
-        this.entitiesOnGrid[entityToPlace.getEntityColumnPosition()][entityToPlace.getEntityColumnPosition()] = entityToPlace;
+        this.entitiesOnGrid[entityToPlace.getEntityColumnPosition()][entityToPlace.getEntityRowPosition()] = entityToPlace;
+    }
+    public void printEntities(){
+        System.out.println("Entities are at:");
+        for(int i = 0; i < this.entitiesOnGrid.length;i++){
+            for(int j = 0; j < this.entitiesOnGrid[i].length;j++){
+                if(entitiesOnGrid[i][j] == null){
+                    System.out.print(".");
+                } else {
+                    System.out.print(this.entitiesOnGrid[i][j].getEntitySprite());
+                }
+
+            }
+            System.out.println();
+        }
     }
 }

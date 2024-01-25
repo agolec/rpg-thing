@@ -41,9 +41,19 @@ public abstract class Entity {
         this.position[0] = columnPosition;
         this.position[1] = rowPosition;
     }
+    public void setColumnPosition(int columnPosition){
+        this.position[0] = columnPosition;
+    }
+    public void setRowPosition(int rowPosition){
+        this.position[1] = rowPosition;
+    }
+    public int getMovementSpeed(){
+        return this.movementSpeed;
+    }
     public boolean canEntityCollide(){
         return this.canCollide;
     }
+
     public String toString(){
         return "Entity: " + this.name + "\n" +
                 "Row: " + this.getEntityColumnPosition() +  "\n" +

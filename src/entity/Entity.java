@@ -8,12 +8,12 @@ public abstract class Entity {
     private char sprite;
     int[] position;
     private boolean canCollide;
-    Entity(String name,int movementSpeed,char sprite,int xPosition,int yPosition,boolean canCollide){
+    Entity(String name,int movementSpeed,char sprite,int columnPosition,int rowPosition,boolean canCollide){
         this.name = name;
         this.movementSpeed = movementSpeed;
         this.sprite = sprite;
         this.position = new int[2];
-        setPosition(xPosition,yPosition);
+        setPosition(columnPosition,rowPosition);
         this.canCollide = canCollide;
 
     }

@@ -1,8 +1,8 @@
 package entity;
 
 public class PlayerCharacter extends Entity {
-    public PlayerCharacter(String entityName, int movementSpeed, char spriteChar, int xPosition, int yPosition, boolean canCollide){
-        super(entityName,movementSpeed,spriteChar,xPosition,yPosition,canCollide);
+    public PlayerCharacter(String entityName, int movementSpeed, char spriteChar, int columnPosition, int rowPosition, boolean canCollide){
+        super(entityName,movementSpeed,spriteChar,columnPosition,rowPosition,canCollide);
     }
 
 }

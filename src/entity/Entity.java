@@ -3,11 +3,11 @@ package entity;
 import java.util.Arrays;
 
 public abstract class Entity {
-    private String name;
-    private int movementSpeed;
-    private char sprite;
-    int[] position;
-    private boolean canCollide;
+    private final String name;
+    private final int movementSpeed;
+    private final char sprite;
+    private final int[] position;
+    private final boolean canCollide;
     Entity(String name,int movementSpeed,char sprite,int columnPosition,int rowPosition,boolean canCollide){
         this.name = name;
         this.movementSpeed = movementSpeed;

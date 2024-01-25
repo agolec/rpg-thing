@@ -85,7 +85,7 @@ public class Map {
         grid[entity.getEntityColumnPosition()][entity.getEntityRowPosition()] = entity.getEntitySprite();
     }
 
-    private boolean canPlaceEntityOnMap(Entity entityToPlace,int desiredRowPosition,int desiredColumnPosition) {
+    public boolean canPlaceEntityOnMap(Entity entityToPlace,int desiredRowPosition,int desiredColumnPosition) {
         final int MAX_GRID_ROW = this.mapRows - BORDER_SIZE;
         final int MAX_GRID_COLUMN = this.mapColumns - BORDER_SIZE;
 

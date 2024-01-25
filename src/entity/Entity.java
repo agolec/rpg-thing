@@ -55,10 +55,13 @@ public abstract class Entity {
     }
 
     public String toString(){
-        return "Entity: " + this.name + "\n" +
-                "Row: " + this.getEntityColumnPosition() +  "\n" +
-                "Column: " + this.getEntityRowPosition() + "\n"
-                + "Sprite: " + this.getEntitySprite();
+        return "Entity(" +
+                "name= '" + this.name + "\'" +
+                ", movementSpeed= " + this.movementSpeed +
+                ", sprite=" + this.sprite +
+                ", position: " + Arrays.toString(this.getPosition())  +
+                ", can collide=" + this.canCollide +
+                ")";
     }
 
 }

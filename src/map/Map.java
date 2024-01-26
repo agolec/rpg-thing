@@ -1,6 +1,7 @@
 package map;
 
 import entity.Entity;
+import movement.Movement;
 
 import java.util.*;
 
@@ -80,6 +81,35 @@ public class Map {
             System.out.println("Invalid position. Select another space.");
         }
     }
+    public void moveEntity(Entity entity, Movement movement) {
+        int desiredColumnPosition = calculateDesiredColumnPosition(entity, movement);
+        int desiredRowPosition = calculateDesiredRowPosition(entity, movement);
+
+        if (canPlaceEntityOnMap(entity, desiredColumnPosition, desiredRowPosition)) {
+            moveEntityToPosition(entity, desiredColumnPosition, desiredRowPosition);
+        } else {
+            System.out.println("Invalid position. Select another space.");
+        }
+    }
+
+    private int calculateDesiredColumnPosition(Entity entity, Movement movement) {
+        // Calculate the desired column position based on current position and movement direction
+        // ...
+        return 0;
+    }
+
+    private int calculateDesiredRowPosition(Entity entity, Movement movement) {
+        // Calculate the desired row position based on current position and movement direction
+        // ...
+        return 0;
+    }
+
+    private void moveEntityToPosition(Entity entity, int desiredColumnPosition, int desiredRowPosition) {
+        // Move the entity to the specified position
+        // ...
+
+    }
+
 
     private void placeSpriteOnGrid(Entity entity) {
         grid[entity.getEntityColumnPosition()][entity.getEntityRowPosition()] = entity.getEntitySprite();

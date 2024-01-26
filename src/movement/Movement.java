@@ -1,53 +1,25 @@
-package map;
+package movement;
 
 import entity.Entity;
 import entity.PlayerCharacter;
-
-import java.util.Scanner;
+import input.MovementUserInputHandler;
+import map.Map;
 
 public class Movement {
     static final String UP = "UP";
     static final String DOWN = "DOWN";
     static final String LEFT = "LEFT";
     static final String RIGHT = "RIGHT";
-    private Scanner scan;
-    private String currentChoice;
-    private static String direction;
-    public Movement(Scanner scan){
-        this.scan = scan;
+    private String direction;
+    private MovementUserInputHandler userInputHandler;
+    public Movement(MovementUserInputHandler userInputHandler){
+        this.userInputHandler = userInputHandler;
     }
-    public void printMenu(){
-        final String templateFormat = "Type \"%s\" to move %s";
-        System.out.println("===Enter your movement===");
-        System.out.println(String.format(templateFormat,UP,UP));
-        System.out.println(String.format(templateFormat,DOWN,DOWN));
-        System.out.println(String.format(templateFormat,LEFT,LEFT));
-        System.out.println(String.format(templateFormat,RIGHT,RIGHT));
-    }
-
     public void setDirection(){
-        boolean isValidDirection = false;
-
-        do {
-            printMenu();
-            String userInput = scan.nextLine().toUpperCase().trim();
-
-            if (validDirection(userInput)) {
-                this.direction = userInput;
-                isValidDirection = true;
-            } else {
-                System.out.println("Invalid direction. Please enter a valid direction.");
-            }
-        } while (!isValidDirection);
-    }
-    private void clearInputBuffer(){
-        while(scan.hasNextLine() && !scan.nextLine().isEmpty()){
-            scan.next();
-            //scan.nextLine();
-        }
+        this.direction = userInputHandler.getDirectionInput();
     }
 
-    private boolean validDirection(String direction){
+    public static boolean validDirection(String direction){
         if(direction != null && !direction.isEmpty()){
             if(direction.equals(UP) || direction.equals(DOWN)
                     || direction.equals(LEFT) || direction.equals(RIGHT)){
@@ -59,7 +31,7 @@ public class Movement {
         return false;
 
     }
-    public static void move(Entity entity,Map gameMap){
+    public void move(Entity entity, Map gameMap){
         if(entity instanceof PlayerCharacter){
             if(direction == UP){
                 entity.setRowPosition(entity.getMovementSpeed() * -1);
@@ -74,7 +46,19 @@ public class Movement {
             }
         }
     }
+    public static String getUpString(){
+        return UP;
+    }
+    public static String getDownString(){
+        return DOWN;
+    }
+    public static String getLeftString(){
+        return LEFT;
+    }
+    public static String getRightString(){
+        return RIGHT;
+    }
     public String toString(){
-        return "Choice is + " + this.direction;
+        return "Direction is + " + this.direction;
     }
 }

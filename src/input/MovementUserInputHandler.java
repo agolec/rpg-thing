@@ -47,10 +47,5 @@ public class MovementUserInputHandler {
 
         return direction;
     }
-//    private void clearInputBuffer(){
-//        while(scan.hasNextLine() && !scan.nextLine().isEmpty()){
-//            scan.next();
-//            //scan.nextLine();
-//        }
-//    }
+
 }

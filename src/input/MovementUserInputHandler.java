@@ -1,5 +1,6 @@
 package input;
 
+import movement.Direction;
 import movement.Movement;
 
 import java.util.Scanner;
@@ -11,10 +12,7 @@ public class MovementUserInputHandler {
         this.scanner = scanner;
     }
 
-    public String getDirectionInput() {
-        printMenu();
-        return getValidDirectionInput();
-    }
+
 
     private void printMenu() {
         final String UP = Movement.getUpString();
@@ -30,19 +28,24 @@ public class MovementUserInputHandler {
         System.out.println(String.format(templateFormat, RIGHT, RIGHT));
     }
 
-    private String getValidDirectionInput() {
+    private Direction getValidDirectionInput() {
         boolean isValidDirection = false;
-        String direction = "";
+        Direction direction = null;
 
         do {
             String userInput = scanner.nextLine().toUpperCase().trim();
-
-            if (Movement.validDirection(userInput)) {
-                direction = userInput;
+            try {
+                direction = Direction.fromString(userInput);
                 isValidDirection = true;
-            } else {
-                System.out.println("Invalid direction. Please enter a valid direction.");
+            }catch(IllegalArgumentException e) {
+                System.out.println("Invalid direction. Please enter another input.");
             }
+//            if (Movement.validDirection(userInput)) {
+//                direction = userInput;
+//                isValidDirection = true;
+//            } else {
+//                System.out.println("Invalid direction. Please enter a valid direction.");
+//            }
         } while (!isValidDirection);
 
         return direction;

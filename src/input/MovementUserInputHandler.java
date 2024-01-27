@@ -12,6 +12,10 @@ public class MovementUserInputHandler {
         this.scanner = scanner;
     }
 
+    public Direction getDirectionInput(){
+        printMenu();
+        return getValidDirectionInput();
+    }
 
 
     private void printMenu() {
@@ -40,12 +44,7 @@ public class MovementUserInputHandler {
             }catch(IllegalArgumentException e) {
                 System.out.println("Invalid direction. Please enter another input.");
             }
-//            if (Movement.validDirection(userInput)) {
-//                direction = userInput;
-//                isValidDirection = true;
-//            } else {
-//                System.out.println("Invalid direction. Please enter a valid direction.");
-//            }
+
         } while (!isValidDirection);
 
         return direction;

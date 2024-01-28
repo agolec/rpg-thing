@@ -2,7 +2,7 @@ package entity;
 
 import java.util.Arrays;
 
-public abstract class Entity {
+public class Entity {
     private final String name;
     private final int movementSpeed;
     private final char sprite;

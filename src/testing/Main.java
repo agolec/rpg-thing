@@ -1,3 +1,5 @@
+package testing;
+
 import entity.Entity;
 import map.Map;
 import map.Position;

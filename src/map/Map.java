@@ -1,7 +1,8 @@
 package map;
 
 import entity.Entity;
-import movement.Movement;
+import movement.Direction;
+import util.Debug;
 
 import java.util.*;
 
@@ -87,12 +88,12 @@ public class Map {
         if (canPlaceEntityOnMap(entity, row, col)) {
             entity.getPosition().set(row, col);
             addEntity(entity);
-            grid[row][col] = entity.getSprite(); // inline, controlled
+            //grid[row][col] = entity.getSprite(); // inline, controlled
         }
     }
-    public void moveEntity(Entity entity, Movement movement) {
-        int desiredColumnPosition = calculateDesiredColumnPosition(entity, movement);
-        int desiredRowPosition = calculateDesiredRowPosition(entity, movement);
+    public void moveEntity(Entity entity, Direction direction) {
+        int desiredColumnPosition = calculateDesiredColumnPosition(entity, direction);
+        int desiredRowPosition = calculateDesiredRowPosition(entity, direction);
 
         if (canPlaceEntityOnMap(entity, desiredRowPosition, desiredColumnPosition)) {
             moveEntityToPosition(entity, desiredRowPosition, desiredColumnPosition);
@@ -100,18 +101,26 @@ public class Map {
             System.out.println("Invalid position. Select another space.");
         }
     }
+    private int calculateDesiredColumnPosition(Entity entity, Direction direction) {
+        int col = entity.getPosition().getColumn();
 
-    private int calculateDesiredColumnPosition(Entity entity, Movement movement) {
-        // Calculate the desired column position based on current position and movement direction
-        // ...
-        return 0;
+        return switch (direction) {
+            case LEFT -> col - 1;
+            case RIGHT -> col + 1;
+            default -> col;
+        };
+    }
+    private int calculateDesiredRowPosition(Entity entity, Direction direction) {
+        int row = entity.getPosition().getRow();
+
+        return switch (direction) {
+            case UP -> row - 1;
+            case DOWN -> row + 1;
+            default -> row;
+        };
     }
 
-    private int calculateDesiredRowPosition(Entity entity, Movement movement) {
-        // Calculate the desired row position based on current position and movement direction
-        // ...
-        return 0;
-    }
+
 
     public void moveEntityToPosition(Entity entity, int targetRow, int targetColumn) {
         Position pos = entity.getPosition();
@@ -173,6 +182,40 @@ public class Map {
 
             }
             System.out.println();
+        }
+    }
+    public int getRows(){
+        return this.mapRows;
+    }
+    public int getColumns(){
+        return this.mapColumns;
+    }
+    public char getTile(int row, int column){
+        Entity entity = entitiesOnGrid[row][column];
+
+        if(entity != null){
+            return entity.getSprite();
+        }
+        if(grid[row][column] == 'a'){
+            System.out.println("Grid has @ at: " + row + "," + column);
+        }
+        return grid[row][column];
+    }
+    //for debugging
+    public void debugPrintEntityLocations() {
+        if(!Debug.ENABLED) {
+            return;
+        }
+
+        System.out.println("=== ENTITY LOCATIONS ===");
+
+        for (int r = 0; r < mapRows; r++) {
+            for (int c = 0; c < mapColumns; c++) {
+
+                if (entitiesOnGrid[r][c] != null) {
+                    System.out.println("Entity at: " + r + "," + c);
+                }
+            }
         }
     }
 }

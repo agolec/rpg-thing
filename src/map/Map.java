@@ -95,12 +95,23 @@ public class Map {
         int desiredColumnPosition = calculateDesiredColumnPosition(entity, direction);
         int desiredRowPosition = calculateDesiredRowPosition(entity, direction);
 
+        Entity existing = entitiesOnGrid[desiredRowPosition][desiredColumnPosition];
+
+        if(existing != null){
+            existing.onEnter(entity);
+
+            if(existing.canCollide()){
+                return;
+            }
+        }
+
         if (canPlaceEntityOnMap(entity, desiredRowPosition, desiredColumnPosition)) {
             moveEntityToPosition(entity, desiredRowPosition, desiredColumnPosition);
         } else {
             System.out.println("Invalid position. Select another space.");
         }
     }
+
     private int calculateDesiredColumnPosition(Entity entity, Direction direction) {
         int col = entity.getPosition().getColumn();
 
@@ -124,7 +135,6 @@ public class Map {
 
     public void moveEntityToPosition(Entity entity, int targetRow, int targetColumn) {
         Position pos = entity.getPosition();
-        System.out.println(pos == entity.getPosition());
 
         int oldRow = pos.getRow();
         int oldCol = pos.getColumn();
@@ -195,9 +205,6 @@ public class Map {
 
         if(entity != null){
             return entity.getSprite();
-        }
-        if(grid[row][column] == 'a'){
-            System.out.println("Grid has @ at: " + row + "," + column);
         }
         return grid[row][column];
     }

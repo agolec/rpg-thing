@@ -1,5 +1,7 @@
 package entity;
 
+import entity.movement.MovementBehavior;
+import map.Map;
 import map.Position;
 
 public class Entity {
@@ -7,6 +9,7 @@ public class Entity {
     private char sprite;
     private final Position position;
     private final boolean canCollide;
+    private MovementBehavior movementBehavior;
     public Entity(String name,char sprite,Position position,boolean canCollide){
         this.name = name;
         this.position = position;
@@ -24,6 +27,18 @@ public class Entity {
 
     public boolean canCollide(){
         return this.canCollide;
+    }
+    public void onEnter(Entity entity){
+        //default: do nothing
+    };
+
+    public void setMovementBehavior(MovementBehavior behavior){
+        this.movementBehavior = behavior;
+    }
+    public void updateMovement(Map map){
+        if(movementBehavior != null){
+            this.movementBehavior.move(this,map);
+        }
     }
 
     public String toString(){

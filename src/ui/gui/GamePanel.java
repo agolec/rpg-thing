@@ -1,25 +1,37 @@
 package ui.gui;
 
 import entity.Entity;
+import entity.PlayerCharacter;
+import entity.movement.PlayerMovement;
 import map.Map;
 import movement.Direction;
 import util.Debug;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel {
     private Map map;
-    private Entity player;
+
     private long lastMoveTime = 0;
     private final int MOVE_DELAY = 150;
 
     private boolean up,down,left,right;
-    public GamePanel(Map map, Entity player){
+    private PlayerMovement playerMovement;
+    private PlayerCharacter player;
+    private List<Entity> entities;
+    public GamePanel(Map map, PlayerCharacter player, List<Entity> entities){
         this.map = map;
+
+        this.entities = entities;
         this.player = player;
+        this.playerMovement = new PlayerMovement();
+        this.player.setMovementBehavior(playerMovement);
+
+
 
         setFont(new java.awt.Font("Segoe UI Emoji", Font.PLAIN, 36));
         setFocusable(true);
@@ -64,25 +76,29 @@ public class GamePanel extends JPanel {
         if (now - lastMoveTime < MOVE_DELAY) return;
 
         if (up) {
-            map.moveEntity(player, Direction.UP);
+            playerMovement.setDirection(Direction.UP);
             lastMoveTime = now;
         }
         else if (down) {
-            map.moveEntity(player, Direction.DOWN);
+            playerMovement.setDirection(Direction.DOWN);
             lastMoveTime = now;
         }
         else if (left) {
-            map.moveEntity(player, Direction.LEFT);
+            playerMovement.setDirection(Direction.LEFT);
             lastMoveTime = now;
         }
         else if (right) {
-            map.moveEntity(player, Direction.RIGHT);
+            playerMovement.setDirection(Direction.RIGHT);
             lastMoveTime = now;
         }
         if(Debug.ENABLED){
             if(Debug.MOVEMENT && Debug.ENTITY){
                 map.debugPrintEntityLocations();
             }
+        }
+        player.updateMovement(map);
+        for(Entity e: entities){
+            e.updateMovement(map);
         }
     }
     @Override
@@ -99,6 +115,7 @@ public class GamePanel extends JPanel {
                     case '.' -> "\uD83D\uDFEB";
                     case '@' -> "\uD83D\uDE42";
                     case 'O' -> "\uD83D\uDC79";
+                    case 'G' -> "\uD83D\uDC3B";
                     case '│', '─', '┌', '┐', '└', '┘' -> "🧱";
                     default -> String.valueOf(tile);
                 };

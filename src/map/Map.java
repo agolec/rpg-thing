@@ -62,31 +62,40 @@ public class Map {
             }
         }
     }
-    public void printMap(){
-        for(int rowIterator = 0; rowIterator < mapRows; rowIterator++){
-            for(int columnIterator = 0; columnIterator < mapColumns; columnIterator++){
+    public void printMap() {
+        drawBorder();
+        drawGrid(); // reset entire grid to clean state
+
+        // redraw all entities from source of truth
+        for (int row = 0; row < mapRows; row++) {
+            for (int col = 0; col < mapColumns; col++) {
+                if (entitiesOnGrid[row][col] != null) {
+                    grid[row][col] = entitiesOnGrid[row][col].getSprite();
+                }
+            }
+        }
+
+        // now print
+        for (int rowIterator = 0; rowIterator < mapRows; rowIterator++) {
+            for (int columnIterator = 0; columnIterator < mapColumns; columnIterator++) {
                 System.out.print(grid[rowIterator][columnIterator]);
             }
             System.out.println();
         }
     }
-    public void placeEntity(Entity entity,int desiredColumnPosition,int desiredRowPosition) {
-
-        // Place a character on the map at the specified position
-        if (canPlaceEntityOnMap(entity,desiredColumnPosition,desiredRowPosition)) {
-            System.out.println("yes we can place the character");
+    public void placeEntity(Entity entity, int row, int col) {
+        if (canPlaceEntityOnMap(entity, row, col)) {
+            entity.getPosition().set(row, col);
             addEntity(entity);
-            placeSpriteOnGrid(entity);
-        } else {
-            System.out.println("Invalid position. Select another space.");
+            grid[row][col] = entity.getSprite(); // inline, controlled
         }
     }
     public void moveEntity(Entity entity, Movement movement) {
         int desiredColumnPosition = calculateDesiredColumnPosition(entity, movement);
         int desiredRowPosition = calculateDesiredRowPosition(entity, movement);
 
-        if (canPlaceEntityOnMap(entity, desiredColumnPosition, desiredRowPosition)) {
-            moveEntityToPosition(entity, desiredColumnPosition, desiredRowPosition);
+        if (canPlaceEntityOnMap(entity, desiredRowPosition, desiredColumnPosition)) {
+            moveEntityToPosition(entity, desiredRowPosition, desiredColumnPosition);
         } else {
             System.out.println("Invalid position. Select another space.");
         }
@@ -104,45 +113,53 @@ public class Map {
         return 0;
     }
 
-    private void moveEntityToPosition(Entity entity, int desiredColumnPosition, int desiredRowPosition) {
-        // Move the entity to the specified position
-        // ...
+    public void moveEntityToPosition(Entity entity, int targetRow, int targetColumn) {
+        Position pos = entity.getPosition();
+        System.out.println(pos == entity.getPosition());
 
+        int oldRow = pos.getRow();
+        int oldCol = pos.getColumn();
+
+        // 1a. Clear old position off entity grid
+        entitiesOnGrid[oldRow][oldCol] = null;
+
+        // 2. Update entity position
+        pos.set(targetRow, targetColumn);
+
+        // 3. Place in new position
+        entitiesOnGrid[targetRow][targetColumn] = entity;
     }
 
 
-    private void placeSpriteOnGrid(Entity entity) {
-        grid[entity.getEntityColumnPosition()][entity.getEntityRowPosition()] = entity.getEntitySprite();
-    }
+//    private void placeSpriteOnGrid(Entity entity) {
+//        Position pos = entity.getPosition();
+//        grid[pos.getRow()][pos.getColumn()] = entity.getSprite();
+//    }
 
-    public boolean canPlaceEntityOnMap(Entity entityToPlace,int desiredRowPosition,int desiredColumnPosition) {
-        final int MAX_GRID_ROW = this.mapRows - BORDER_SIZE;
-        final int MAX_GRID_COLUMN = this.mapColumns - BORDER_SIZE;
+    public boolean canPlaceEntityOnMap(Entity entity, int targetRow, int targetColumn) {
+        final int MIN = 1;
+        final int MAX_ROW = this.mapRows - BORDER_SIZE;
+        final int MAX_COL = this.mapColumns - BORDER_SIZE;
 
-        //use column and row position of the entity we are trying to place, to get the row and column we should check on the grid.
-        int existingEntityColumn = entityToPlace.getEntityColumnPosition();
-        int existingEntityRow = entityToPlace.getEntityRowPosition();
-        if(desiredRowPosition < 1 || desiredRowPosition > MAX_GRID_ROW){
-            return false;
-        } else if (desiredColumnPosition < 1 || desiredColumnPosition > MAX_GRID_COLUMN){
-            return false;
-        }
+        // 1. Bounds check
+        if (targetRow < MIN || targetRow > MAX_ROW) return false;
+        if (targetColumn < MIN || targetColumn > MAX_COL) return false;
 
-        if(entitiesOnGrid[existingEntityColumn][existingEntityRow] != null){
-            //if an entity exists on the entitiesOnGrid at the position where
-            if(entitiesOnGrid[existingEntityColumn][existingEntityRow].canEntityCollide() || entityToPlace.canEntityCollide()){
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        // 2. Check occupancy
+        Entity existing = entitiesOnGrid[targetRow][targetColumn];
+
+        if (existing == null) {
             return true;
         }
 
+        // 3. Collision logic
+        return !existing.canCollide() && !entity.canCollide();
     }
 
-    private void addEntity(Entity entityToPlace) {
-        this.entitiesOnGrid[entityToPlace.getEntityColumnPosition()][entityToPlace.getEntityRowPosition()] = entityToPlace;
+
+    private void addEntity(Entity entity) {
+        Position pos = entity.getPosition();
+        entitiesOnGrid[pos.getRow()][pos.getColumn()] = entity;
     }
     public void printEntities(){
         System.out.println("Entities are at:");
@@ -151,7 +168,7 @@ public class Map {
                 if(entitiesOnGrid[i][j] == null){
                     System.out.print(".");
                 } else {
-                    System.out.print(this.entitiesOnGrid[i][j].getEntitySprite());
+                    System.out.print(this.entitiesOnGrid[i][j].getSprite());
                 }
 
             }

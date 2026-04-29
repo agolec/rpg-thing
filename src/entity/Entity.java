@@ -4,7 +4,7 @@ import map.Position;
 
 public class Entity {
     private final String name;
-    private final char sprite;
+    private char sprite;
     private final Position position;
     private final boolean canCollide;
     public Entity(String name,char sprite,Position position,boolean canCollide){

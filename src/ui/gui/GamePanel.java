@@ -21,7 +21,7 @@ public class GamePanel extends JPanel {
         this.map = map;
         this.player = player;
 
-        setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 16));
+        setFont(new java.awt.Font("Segoe UI Emoji", Font.PLAIN, 36));
         setFocusable(true);
         setupKeyInput();
         startGameLoop();
@@ -88,13 +88,22 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int tileSize = 20;
+        int tileSize = 50;
 
         for (int row = 0; row < map.getRows(); row++) {
             for (int col = 0; col < map.getColumns(); col++) {
 
-                char c = map.getTile(row, col);
-                g.drawString(String.valueOf(c), col * tileSize, (row + 1) * tileSize);
+                char tile = map.getTile(row, col);
+
+                String symbol = switch(tile){
+                    case '.' -> "\uD83D\uDFEB";
+                    case '@' -> "\uD83D\uDE42";
+                    case 'O' -> "\uD83D\uDC79";
+                    case '│', '─', '┌', '┐', '└', '┘' -> "🧱";
+                    default -> String.valueOf(tile);
+                };
+
+                g.drawString(symbol, col * tileSize, (row + 1) * tileSize);
             }
         }
     }

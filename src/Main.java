@@ -48,7 +48,4 @@ public class Main {
 
         map.printMap();
     }
-    private static void moveWithInput(Map map, Entity player, Direction dir){
-
-    }
 }

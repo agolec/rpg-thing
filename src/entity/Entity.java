@@ -1,65 +1,35 @@
 package entity;
 
-import java.util.Arrays;
+import map.Position;
 
 public class Entity {
     private final String name;
-    private final int movementSpeed;
     private final char sprite;
-    private final int[] position;
+    private final Position position;
     private final boolean canCollide;
-    Entity(String name,int movementSpeed,char sprite,int columnPosition,int rowPosition,boolean canCollide){
+    public Entity(String name,char sprite,Position position,boolean canCollide){
         this.name = name;
-        this.movementSpeed = movementSpeed;
+        this.position = position;
         this.sprite = sprite;
-        this.position = new int[2];
-        setPosition(columnPosition,rowPosition);
         this.canCollide = canCollide;
 
     }
-    public char getEntitySprite(){
+    public String getName(){ return this.name; }
+    public char getSprite(){
         return this.sprite;
     }
-    public int[] getPosition(){
-        return Arrays.copyOf(position,position.length);
+    public Position getPosition(){
+        return this.position;
     }
-    public boolean hasSamePosition(Entity otherEntity){
-        return (this.getEntityColumnPosition() == otherEntity.getEntityColumnPosition() &&
-                this.getEntityRowPosition() == otherEntity.getEntityRowPosition());
-    }
-    public boolean entityHasDesiredPositionOfAnotherEntity(int desiredColumnPosition,int desiredRowPosition){
-        return (this.getEntityColumnPosition() == desiredColumnPosition &&
-                this.getEntityRowPosition() == desiredRowPosition);
-    }
-    public int getEntityColumnPosition(){
-        return this.position[0];
-    }
-    public int getEntityRowPosition(){
-        return this.position[1];
-    }
-    public void setPosition(int columnPosition,int rowPosition){
-        this.position[0] = columnPosition;
-        this.position[1] = rowPosition;
-    }
-    public void setColumnPosition(int columnPosition){
-        this.position[0] = columnPosition;
-    }
-    public void setRowPosition(int rowPosition){
-        this.position[1] = rowPosition;
-    }
-    public int getMovementSpeed(){
-        return this.movementSpeed;
-    }
-    public boolean canEntityCollide(){
+
+    public boolean canCollide(){
         return this.canCollide;
     }
 
     public String toString(){
         return "Entity(" +
                 "name= '" + this.name + "\'" +
-                ", movementSpeed= " + this.movementSpeed +
                 ", sprite=" + this.sprite +
-                ", position: " + Arrays.toString(this.getPosition())  +
                 ", can collide=" + this.canCollide +
                 ")";
     }

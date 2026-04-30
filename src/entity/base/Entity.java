@@ -1,8 +1,8 @@
-package entity;
+package entity.base;
 
 import entity.movement.MovementBehavior;
-import map.Map;
-import map.Position;
+import overworld.map.Map;
+import overworld.map.Position;
 
 public class Entity {
     private final String name;

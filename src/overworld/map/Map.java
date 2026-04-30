@@ -1,7 +1,9 @@
-package map;
+package overworld.map;
 
-import entity.Entity;
-import movement.Direction;
+import entity.base.Entity;
+import entity.specialised.CombatEntity;
+import overworld.movement.Direction;
+import overworld.movement.MoveResult;
 import util.Debug;
 
 import java.util.*;
@@ -91,24 +93,26 @@ public class Map {
             //grid[row][col] = entity.getSprite(); // inline, controlled
         }
     }
-    public void moveEntity(Entity entity, Direction direction) {
+    public MoveResult moveEntity(Entity entity, Direction direction) {
         int desiredColumnPosition = calculateDesiredColumnPosition(entity, direction);
         int desiredRowPosition = calculateDesiredRowPosition(entity, direction);
 
         Entity existing = entitiesOnGrid[desiredRowPosition][desiredColumnPosition];
 
-        if(existing != null){
+        if (existing != null) {
             existing.onEnter(entity);
 
-            if(existing.canCollide()){
-                return;
+            if (existing.canCollide()) {
+                return new MoveResult(false, existing);
             }
         }
 
         if (canPlaceEntityOnMap(entity, desiredRowPosition, desiredColumnPosition)) {
             moveEntityToPosition(entity, desiredRowPosition, desiredColumnPosition);
+            return new MoveResult(true, null); // only when movement actually happens
         } else {
             System.out.println("Invalid position. Select another space.");
+            return new MoveResult(false, null); // correctly report failure
         }
     }
 
@@ -223,6 +227,17 @@ public class Map {
                     System.out.println("Entity at: " + r + "," + c);
                 }
             }
+        }
+    }
+
+    public void removeEntity(Entity entity) {
+        Position pos = entity.getPosition();
+
+        int row = pos.getRow();
+        int col = pos.getColumn();
+
+        if (entitiesOnGrid[row][col] == entity) {
+            entitiesOnGrid[row][col] = null;
         }
     }
 }

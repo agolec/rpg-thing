@@ -1,4 +1,4 @@
-package map;
+package overworld.map;
 
 public class Position {
     private int row;

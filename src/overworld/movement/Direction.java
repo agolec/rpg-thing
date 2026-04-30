@@ -1,4 +1,4 @@
-package movement;
+package overworld.movement;
 
 public enum Direction {
     UP, DOWN, LEFT, RIGHT;

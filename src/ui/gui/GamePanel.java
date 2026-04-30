@@ -1,10 +1,13 @@
 package ui.gui;
 
-import entity.Entity;
+import combat.Combat;
+import entity.base.Entity;
 import entity.PlayerCharacter;
 import entity.movement.PlayerMovement;
-import map.Map;
-import movement.Direction;
+import entity.specialised.CombatEntity;
+import overworld.map.Map;
+import overworld.movement.Direction;
+import overworld.movement.MoveResult;
 import util.Debug;
 
 import javax.swing.*;
@@ -14,6 +17,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel {
+    private enum GameState {
+        OVERWORLD,
+        COMBAT
+    }
+    private GameState gameState;
+    private Combat combat;
     private Map map;
 
     private long lastMoveTime = 0;
@@ -30,6 +39,7 @@ public class GamePanel extends JPanel {
         this.player = player;
         this.playerMovement = new PlayerMovement();
         this.player.setMovementBehavior(playerMovement);
+        this.gameState = GameState.OVERWORLD;
 
 
 
@@ -43,11 +53,17 @@ public class GamePanel extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> up = true;
-                    case KeyEvent.VK_S -> down = true;
-                    case KeyEvent.VK_A -> left = true;
-                    case KeyEvent.VK_D -> right = true;
+                if(gameState == GameState.OVERWORLD){
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_W -> up = true;
+                        case KeyEvent.VK_S -> down = true;
+                        case KeyEvent.VK_A -> left = true;
+                        case KeyEvent.VK_D -> right = true;
+                    }
+                } else if(gameState == GameState.COMBAT){
+                    if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                        combat.playerAttack(combat.getEnemy());
+                    }
                 }
             }
 
@@ -73,32 +89,35 @@ public class GamePanel extends JPanel {
     private void updateGame() {
         long now = System.currentTimeMillis();
 
-        if (now - lastMoveTime < MOVE_DELAY) return;
+        if (gameState == GameState.OVERWORLD) {
 
-        if (up) {
-            playerMovement.setDirection(Direction.UP);
-            lastMoveTime = now;
-        }
-        else if (down) {
-            playerMovement.setDirection(Direction.DOWN);
-            lastMoveTime = now;
-        }
-        else if (left) {
-            playerMovement.setDirection(Direction.LEFT);
-            lastMoveTime = now;
-        }
-        else if (right) {
-            playerMovement.setDirection(Direction.RIGHT);
-            lastMoveTime = now;
-        }
-        if(Debug.ENABLED){
-            if(Debug.MOVEMENT && Debug.ENTITY){
-                map.debugPrintEntityLocations();
+            if (now - lastMoveTime < MOVE_DELAY) return;
+
+            Direction direction = null;
+
+            if (up) direction = Direction.UP;
+            else if (down) direction = Direction.DOWN;
+            else if (left) direction = Direction.LEFT;
+            else if (right) direction = Direction.RIGHT;
+
+            if (direction != null) {
+                MoveResult result = map.moveEntity(player, direction);
+                handleMoveResult(result);
+                lastMoveTime = now;
             }
+
+            for (Entity e : entities) {
+                e.updateMovement(map);
+            }
+
         }
-        player.updateMovement(map);
-        for(Entity e: entities){
-            e.updateMovement(map);
+        else if (gameState == GameState.COMBAT) {
+
+            combat.update(); // 👈 THIS WAS MISSING
+
+            if (combat.isCombatOver()) {
+                handleCombatEnd();
+            }
         }
     }
     @Override
@@ -123,5 +142,33 @@ public class GamePanel extends JPanel {
                 g.drawString(symbol, col * tileSize, (row + 1) * tileSize);
             }
         }
+    }
+    private void handleMoveResult(MoveResult result){
+        if(!result.didMove()){
+            Entity encountered = result.getEncountered();
+
+            if(encountered instanceof CombatEntity ce){
+                startCombat(this.player, ce);
+            }
+        }
+    }
+    private void startCombat(CombatEntity player,CombatEntity enemy){
+        this.combat = new Combat(player, enemy);
+        this.gameState = GameState.COMBAT;
+        System.out.println("combat started with " + enemy.getName());
+    }
+    private void handleCombatEnd(){
+        Entity enemy = combat.getEnemy();
+        if(!combat.getEnemy().isAlive()) {
+            map.removeEntity(combat.getEnemy());
+            entities.remove(enemy);
+            System.out.println("Enemy defeated.");
+        }
+        if(!combat.getPlayer().isAlive()){
+            System.out.println("Game over");
+            System.exit(0);
+        }
+        combat = null;
+        gameState = GameState.OVERWORLD;
     }
 }

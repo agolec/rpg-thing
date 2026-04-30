@@ -1,9 +1,9 @@
 package testing;
 
-import entity.Entity;
-import map.Map;
-import map.Position;
-import movement.Direction;
+import entity.base.Entity;
+import overworld.map.Map;
+import overworld.map.Position;
+import overworld.movement.Direction;
 
 public class Main {
     public static void main(String[] args) {

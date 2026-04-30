@@ -1,8 +1,8 @@
 package entity.movement;
 
-import entity.Entity;
-import map.Map;
-import movement.Direction;
+import entity.base.Entity;
+import overworld.map.Map;
+import overworld.movement.Direction;
 
 public class PlayerMovement implements MovementBehavior {
     private Direction currentDirection;

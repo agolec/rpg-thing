@@ -1,8 +1,7 @@
 package ui.gui;
-import entity.Enemy;
-import entity.Entity;
+import entity.base.Entity;
 import entity.PlayerCharacter;
-import map.Map;
+import overworld.map.Map;
 
 import javax.swing.*;
 import java.util.List;

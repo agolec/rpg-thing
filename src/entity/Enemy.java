@@ -1,11 +1,10 @@
 package entity;
 
-import entity.movement.MovementBehavior;
-import map.Map;
-import map.Position;
-import movement.Direction;
+import entity.base.Entity;
+import entity.specialised.CombatEntity;
+import overworld.map.Position;
 
-public class Enemy extends Entity {
+public class Enemy extends CombatEntity {
     public Enemy(String name, char sprite, Position position, boolean canCollide) {
         super(name, sprite, position, canCollide);
     }

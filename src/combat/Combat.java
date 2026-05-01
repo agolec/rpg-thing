@@ -11,13 +11,13 @@ public class Combat {
         this.player = player;
         this.enemy = enemy;
     }
-    public void playerAttack(CombatEntity target){
-        target.takeDamage(2);
+    public void playerAttack(){
+        this.enemy.takeDamage(2);
         playerTurn = false;
     }
     public void update(){
         if(!playerTurn){
-            player.takeDamage(1);
+            player.takeDamage(10);
             playerTurn = true;
             System.out.println("enemy attacks!");
         }

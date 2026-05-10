@@ -21,7 +21,7 @@ public class Game {
 
     private GameState gameState = GameState.OVERWORLD;
 
-    private final Map map;
+    private Map map;
     private final List<Entity> entities;
     private final CombatEntity player;
 
@@ -48,11 +48,16 @@ public class Game {
     }
 
     public void handlePlayerMove(Direction direction) {
-        if (gameState != GameState.OVERWORLD) return;
+        if (gameState != GameState.OVERWORLD) {
+            return;
+        }
 
         MoveResult result = map.moveEntity(player, direction);
 
-        if (!result.didMove()) {
+        if(result.didMove()){
+            checkMapTransition();
+        }
+        else {
             Entity encountered = result.getEncountered();
 
             if (encountered instanceof CombatEntity ce) {
@@ -84,6 +89,27 @@ public class Game {
         combat = null;
         gameState = GameState.OVERWORLD;
     }
+    private void checkMapTransition(){
+        if(this.player == null){
+            return;
+        }
+        int row = this.player.getPosition().getRow();
+        int column = this.player.getPosition().getColumn();
+
+        if(row == 1 && column == 1){
+            System.out.println("sequence engaged to load next map...");
+            loadSecondMap();
+        }
+    }
+    private void loadSecondMap(){
+        Map secondmap = new Map(5,5);
+        entities.clear();
+        entities.add(player);
+        this.map = secondmap;
+
+        map.placeEntity(player,2,2);
+        System.out.println("entered the second map.");
+    }
 
     public GameState getGameState() {
         return gameState;
@@ -95,6 +121,9 @@ public class Game {
 
     public Map getMap() {
         return map;
+    }
+    public void setMap(Map map){
+        this.map = map;
     }
     public void handleInput(int keyCode) {
         if (this.getGameState() == Game.GameState.OVERWORLD) {

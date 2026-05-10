@@ -60,6 +60,7 @@ public class GamePanel extends JPanel {
                     case '@' -> "\uD83D\uDE42";
                     case 'O' -> "\uD83D\uDC79";
                     case 'G' -> "\uD83D\uDC3B";
+                    case 'D' -> "\uD83D\uDEAA";
                     case '│', '─', '┌', '┐', '└', '┘' -> "⛰️";
                     default -> String.valueOf(tile);
                 };

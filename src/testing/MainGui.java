@@ -1,5 +1,6 @@
 package testing;
 
+import entity.Door;
 import entity.Enemy;
 import entity.PlayerCharacter;
 import entity.base.Entity;
@@ -21,14 +22,17 @@ public class MainGui {
             List<Entity> entities = new ArrayList<>();
             Map map = new Map(SIZE * MULTIPLIER, SIZE * MULTIPLIER);
             PlayerCharacter player = new PlayerCharacter("Player",3,'@', new Position(2, 2), true);
+            Door houseDoor = new Door("door",'D',new Position(1,1),"house",1,1);
             Enemy enemy = new Enemy("Gnoll",'G',new Position(5,5), true);
             enemy.setMovementBehavior(new RandomMovement());
             player.setMovementBehavior(new PlayerMovement());
 
             entities.add(enemy);
+            entities.add(houseDoor);
 
             map.placeEntity(player, 2, 2);
             map.placeEntity(enemy,enemy.getPosition().getRow(),enemy.getPosition().getColumn());
+            map.placeEntity(houseDoor,houseDoor.getPosition().getRow(),houseDoor.getPosition().getColumn());
             new GameWindow(map,player, entities);
         });
     }

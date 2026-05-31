@@ -7,15 +7,22 @@ import overworld.map.Position;
 public class Door extends Entity {
 
     private final String destinationMapId;
-    private final int destinationRow;
-    private final int destinationColumn;
-    public Door(String name, char sprite, Position position,String destinationMapId, int destinationRow,int destinationColumn){
+    private Position destinationPosition;
 
-        super(name,sprite,position,false);
+    public Door(String name, char sprite, Position doorPosition,String destinationMapId, Position destinationPosition){
+
+        super(name,sprite,doorPosition,false);
+        setPosition(destinationPosition);
         this.destinationMapId = destinationMapId;
-        this.destinationRow = destinationRow;
-        this.destinationColumn = destinationColumn;
     }
+
+    private void setPosition(Position destinationPosition) {
+        if(destinationPosition == null){
+            throw new IllegalArgumentException("Error. Destination Position cannot be null.");
+        }
+        this.destinationPosition = destinationPosition;
+    }
+
     @Override
     public void onEnter(Entity entity){
         System.out.println("entering " + destinationMapId);
@@ -25,11 +32,11 @@ public class Door extends Entity {
     }
 
     public int getDestinationRow() {
-        return destinationRow;
+        return this.destinationPosition.getRow();
     }
 
     public int getDestinationColumn() {
-        return destinationColumn;
+        return this.destinationPosition.getColumn();
     }
     public String getDestination(){
         return this.destinationMapId;

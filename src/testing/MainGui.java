@@ -22,7 +22,7 @@ public class MainGui {
             List<Entity> entities = new ArrayList<>();
             Map map = new Map(SIZE * MULTIPLIER, SIZE * MULTIPLIER);
             PlayerCharacter player = new PlayerCharacter("Player",3,'@', new Position(2, 2), true);
-            Door houseDoor = new Door("door",'D',new Position(1,1),"house",1,1);
+            Door houseDoor = new Door("door",'D',new Position(1,1),"house",new Position(1,1));
             Enemy enemy = new Enemy("Gnoll",'G',new Position(5,5), true);
             enemy.setMovementBehavior(new RandomMovement());
             player.setMovementBehavior(new PlayerMovement());

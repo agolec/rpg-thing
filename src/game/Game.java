@@ -1,13 +1,22 @@
 package game;
 
 import combat.Combat;
+import entity.Door;
+import entity.Enemy;
+import entity.PlayerCharacter;
 import entity.base.Entity;
+import entity.movement.PlayerMovement;
+import entity.movement.RandomMovement;
 import entity.specialised.CombatEntity;
 import overworld.map.Map;
+import overworld.map.Position;
 import overworld.movement.Direction;
 import overworld.movement.MoveResult;
 
 import java.awt.event.KeyEvent;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Game {
@@ -22,7 +31,8 @@ public class Game {
     private GameState gameState = GameState.OVERWORLD;
 
     private Map map;
-    private final List<Entity> entities;
+    private List<Entity> entities;
+    private List<Entity> overworldEntities;
     private final CombatEntity player;
 
     private Combat combat;
@@ -31,7 +41,9 @@ public class Game {
         this.map = map;
         this.player = player;
         this.entities = entities;
+        this.overworldEntities = new ArrayList<>(entities);
     }
+
 
     public void update() {
         if (gameState == GameState.OVERWORLD) {
@@ -48,22 +60,67 @@ public class Game {
     }
 
     public void handlePlayerMove(Direction direction) {
-        if (gameState != GameState.OVERWORLD) {
+
+        if(gameState != GameState.OVERWORLD){
             return;
         }
 
         MoveResult result = map.moveEntity(player, direction);
 
-        if(result.didMove()){
-            checkMapTransition();
+        Entity interacted = result.getInteractedEntity();
+
+        if(interacted instanceof Door door){
+            loadMap(door.getDestination(),3,3);
         }
-        else {
+
+        if(!result.didMove()){
+
             Entity encountered = result.getEncountered();
 
-            if (encountered instanceof CombatEntity ce) {
+            if(encountered instanceof CombatEntity ce){
                 startCombat(player, ce);
             }
         }
+    }
+    private void loadMap(String mapId, int row, int col){
+
+        Map newMap;
+
+        switch(mapId){
+            case "house" -> newMap = createHouseMap();
+            case "overworld" -> newMap = createOverworldMap();
+            default -> throw new IllegalArgumentException("Unknown map");
+        }
+
+        if("overworld".equals(mapId)){
+            entities.clear();
+            entities.addAll(overworldEntities);
+        } else if("house".equals(mapId)){
+            entities.clear();
+            entities.add(player);
+        }
+
+        this.map = newMap;
+
+        map.placeEntity(player,row,col);
+    }
+    private Map createHouseMap(){
+        Map houseMap = new Map(4,4);
+        List<Entity> entities = new ArrayList<>();
+        Door exitDoor = new Door("door",'D',new Position(3,3),"overworld",new Position(2,2));
+
+        entities.add(player);
+        entities.add(exitDoor);
+
+        entities.forEach( entity -> houseMap.placeEntity(entity, entity.getPosition().getRow(),entity.getPosition().getColumn()));
+        return houseMap;
+    }
+    private Map createOverworldMap(Entity... entitiesToAdd){
+        Map overWorldMap = new Map(10,10);
+        List<Entity> entities = new ArrayList<>(this.overworldEntities);
+        entities.forEach(entity -> overWorldMap.placeEntity(entity,entity.getPosition().getRow(),entity.getPosition().getColumn()));
+
+        return overWorldMap;
     }
 
     private void startCombat(CombatEntity player, CombatEntity enemy) {
@@ -88,18 +145,6 @@ public class Game {
 
         combat = null;
         gameState = GameState.OVERWORLD;
-    }
-    private void checkMapTransition(){
-        if(this.player == null){
-            return;
-        }
-        int row = this.player.getPosition().getRow();
-        int column = this.player.getPosition().getColumn();
-
-        if(row == 1 && column == 1){
-            System.out.println("sequence engaged to load next map...");
-            loadSecondMap();
-        }
     }
     private void loadSecondMap(){
         Map secondmap = new Map(5,5);
@@ -132,6 +177,7 @@ public class Game {
                 case KeyEvent.VK_S -> this.handlePlayerMove(Direction.DOWN);
                 case KeyEvent.VK_A -> this.handlePlayerMove(Direction.LEFT);
                 case KeyEvent.VK_D -> this.handlePlayerMove(Direction.RIGHT);
+                case KeyEvent.VK_ESCAPE -> System.exit(0);
             }
         }
 

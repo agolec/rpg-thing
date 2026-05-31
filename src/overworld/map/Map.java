@@ -19,12 +19,12 @@ public class Map {
 
     private final int GRID_BORDER_OFFSET = 2;
     private final int SPRITE_PLACEMENT_OFFSET = 1;
-    public Map(int rows,int columns,List<Entity> entities){
-        this.mapRows = rows + BORDER_SIZE;
-        this.mapColumns = columns + BORDER_SIZE;
-        this.grid = new char[mapRows][mapColumns];
-        initializeMap();
-    }
+//    public Map(int rows,int columns,List<Entity> entities){
+//        this.mapRows = rows + BORDER_SIZE;
+//        this.mapColumns = columns + BORDER_SIZE;
+//        this.grid = new char[mapRows][mapColumns];
+//        initializeMap();
+//    }
     public Map(int rows,int columns){
         this.mapRows = rows + BORDER_SIZE;
         this.mapColumns = columns + BORDER_SIZE;
@@ -99,20 +99,23 @@ public class Map {
 
         Entity existing = entitiesOnGrid[desiredRowPosition][desiredColumnPosition];
 
-        if (existing != null) {
+        if(existing != null){
+
             existing.onEnter(entity);
 
-            if (existing.canCollide()) {
-                return new MoveResult(false, existing);
+            if(existing.canCollide()){
+                return new MoveResult(false, existing, existing);
             }
+
+            return new MoveResult(true, null, existing);
         }
 
         if (canPlaceEntityOnMap(entity, desiredRowPosition, desiredColumnPosition)) {
             moveEntityToPosition(entity, desiredRowPosition, desiredColumnPosition);
-            return new MoveResult(true, null); // only when movement actually happens
+            return new MoveResult(true, null,existing); // only when movement actually happens
         } else {
             System.out.println("Invalid position. Select another space.");
-            return new MoveResult(false, null); // correctly report failure
+            return new MoveResult(false, null,existing); // correctly report failure
         }
     }
 

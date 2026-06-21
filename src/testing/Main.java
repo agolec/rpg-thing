@@ -5,17 +5,21 @@ import overworld.map.Map;
 import overworld.map.Position;
 import overworld.movement.Direction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
 
         // 1. Create map
-        Map map = new Map(5, 5);
+        List<Entity> lmao = new ArrayList<>();
+        Map map = new Map(5, 5,lmao);
 
         // 2. Create entity at (row=2, col=2)
         Entity player = new Entity("Player", '@', new Position(2, 2), true);
 
         // 3. Place entity
-        map.placeEntity(player, 2, 2);
+        //map.placeEntity(player, 2, 2);
 
         // 4. Print initial state
         System.out.println("Initial Map:");

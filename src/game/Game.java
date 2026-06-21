@@ -3,20 +3,15 @@ package game;
 import combat.Combat;
 import entity.Door;
 import entity.Enemy;
-import entity.PlayerCharacter;
 import entity.base.Entity;
-import entity.movement.PlayerMovement;
 import entity.movement.RandomMovement;
 import entity.specialised.CombatEntity;
 import overworld.map.Map;
 import overworld.map.Position;
 import overworld.movement.Direction;
 import overworld.movement.MoveResult;
-
 import java.awt.event.KeyEvent;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Game {
@@ -28,26 +23,28 @@ public class Game {
         COMBAT
     }
 
-    private GameState gameState = GameState.OVERWORLD;
+    private GameState gameState;
 
     private Map map;
-    private List<Entity> entities;
-    private List<Entity> overworldEntities;
     private final CombatEntity player;
-
     private Combat combat;
+    private Map overworldMap;
+    private Map houseMap;
 
-    public Game(Map map, CombatEntity player, List<Entity> entities) {
-        this.map = map;
+    public Game(Map map, CombatEntity player) {
+
         this.player = player;
-        this.entities = entities;
-        this.overworldEntities = new ArrayList<>(entities);
+        this.gameState = GameState.OVERWORLD;
+        this.overworldMap = map;
+        this.houseMap = createHouseMap();
+        this.map = overworldMap;
+        this.map.placeEntity(player);
     }
 
 
     public void update() {
         if (gameState == GameState.OVERWORLD) {
-            for (Entity e : entities) {
+            for (Entity e : map.getEntities()) {
                 e.updateMovement(map);
             }
         } else if (gameState == GameState.COMBAT) {
@@ -87,40 +84,50 @@ public class Game {
         Map newMap;
 
         switch(mapId){
-            case "house" -> newMap = createHouseMap();
-            case "overworld" -> newMap = createOverworldMap();
+            case "house" -> newMap = houseMap;
+            case "overworld" -> newMap = overworldMap;
             default -> throw new IllegalArgumentException("Unknown map");
         }
 
-        if("overworld".equals(mapId)){
-            entities.clear();
-            entities.addAll(overworldEntities);
-        } else if("house".equals(mapId)){
-            entities.clear();
-            entities.add(player);
-        }
-
+        this.map.removeEntity(player);
         this.map = newMap;
-
-        map.placeEntity(player,row,col);
+        this.map.placeEntity(player);
     }
     private Map createHouseMap(){
-        Map houseMap = new Map(4,4);
+        Map houseMap;
         List<Entity> entities = new ArrayList<>();
         Door exitDoor = new Door("door",'D',new Position(3,3),"overworld",new Position(2,2));
 
-        entities.add(player);
+        //entities.add(player);
         entities.add(exitDoor);
+        houseMap = new Map(4,4, entities);
 
-        entities.forEach( entity -> houseMap.placeEntity(entity, entity.getPosition().getRow(),entity.getPosition().getColumn()));
+        entities.forEach( entity -> houseMap.placeEntity(entity));
         return houseMap;
     }
-    private Map createOverworldMap(Entity... entitiesToAdd){
-        Map overWorldMap = new Map(10,10);
-        List<Entity> entities = new ArrayList<>(this.overworldEntities);
-        entities.forEach(entity -> overWorldMap.placeEntity(entity,entity.getPosition().getRow(),entity.getPosition().getColumn()));
+    private Map createOverworldMap(){
+        Map overworld = new Map(10, 10);
 
-        return overWorldMap;
+        Door houseDoor = new Door(
+                "door",
+                'D',
+                new Position(1,1),
+                "house",
+                new Position(1,1));
+
+        Enemy enemy = new Enemy(
+                "Gnoll",
+                'G',
+                new Position(5,5),
+                true);
+
+        enemy.setMovementBehavior(new RandomMovement());
+
+        overworld.placeEntity(enemy);
+
+        overworld.placeEntity(houseDoor);
+
+        return overworld;
     }
 
     private void startCombat(CombatEntity player, CombatEntity enemy) {
@@ -134,7 +141,7 @@ public class Game {
 
         if (!enemy.isAlive()) {
             map.removeEntity(enemy);
-            entities.remove(enemy);
+//            map.removeEntity(enemy);
             System.out.println("Enemy defeated.");
         }
 
@@ -145,15 +152,6 @@ public class Game {
 
         combat = null;
         gameState = GameState.OVERWORLD;
-    }
-    private void loadSecondMap(){
-        Map secondmap = new Map(5,5);
-        entities.clear();
-        entities.add(player);
-        this.map = secondmap;
-
-        map.placeEntity(player,2,2);
-        System.out.println("entered the second map.");
     }
 
     public GameState getGameState() {

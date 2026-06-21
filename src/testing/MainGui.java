@@ -20,7 +20,7 @@ public class MainGui {
             final int SIZE = 5;
             final int MULTIPLIER = 2;
             List<Entity> entities = new ArrayList<>();
-            Map map = new Map(SIZE * MULTIPLIER, SIZE * MULTIPLIER);
+
             PlayerCharacter player = new PlayerCharacter("Player",3,'@', new Position(2, 2), true);
             Door houseDoor = new Door("door",'D',new Position(1,1),"house",new Position(1,1));
             Enemy enemy = new Enemy("Gnoll",'G',new Position(5,5), true);
@@ -30,10 +30,12 @@ public class MainGui {
             entities.add(enemy);
             entities.add(houseDoor);
 
-            map.placeEntity(player, 2, 2);
-            map.placeEntity(enemy,enemy.getPosition().getRow(),enemy.getPosition().getColumn());
-            map.placeEntity(houseDoor,houseDoor.getPosition().getRow(),houseDoor.getPosition().getColumn());
-            new GameWindow(map,player, entities);
+            Map map = new Map(SIZE * MULTIPLIER, SIZE * MULTIPLIER,entities);
+
+           // map.placeEntity(enemy);
+            map.placeEntity(houseDoor);
+
+            new GameWindow(map,player);
         });
     }
 }

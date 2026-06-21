@@ -10,9 +10,9 @@ import java.util.List;
 
 public class GameWindow {
 
-    public GameWindow(Map map, PlayerCharacter player ,List<Entity> entities) {
+    public GameWindow(Map map, PlayerCharacter player) {
         JFrame frame = new JFrame("RPG");
-        Game game = new Game(map,player,entities);
+        Game game = new Game(map,player);
         GamePanel panel = new GamePanel(game);
 
         frame.add(panel);

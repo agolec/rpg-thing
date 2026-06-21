@@ -1,12 +1,12 @@
 package overworld.map;
 
 import entity.base.Entity;
-import entity.specialised.CombatEntity;
 import overworld.movement.Direction;
 import overworld.movement.MoveResult;
 import util.Debug;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Map {
     private static final int BORDER_SIZE = 2;
@@ -14,23 +14,32 @@ public class Map {
     private int mapRows;
     private int mapColumns;
 
-    private Entity[][] entitiesOnGrid;
+    private Entity[][] entitiesOnGrid;      //entitiesOnGrid is a 2d array keeping track of entity positions.
+    private List<Entity> entitiesWithinMap; //entitiesWithinMap refers to the entities that currently exist on the instance of the map.
 
 
     private final int GRID_BORDER_OFFSET = 2;
     private final int SPRITE_PLACEMENT_OFFSET = 1;
-//    public Map(int rows,int columns,List<Entity> entities){
-//        this.mapRows = rows + BORDER_SIZE;
-//        this.mapColumns = columns + BORDER_SIZE;
-//        this.grid = new char[mapRows][mapColumns];
-//        initializeMap();
-//    }
-    public Map(int rows,int columns){
+
+    public  Map(int rows,int columns, List<Entity> entities){
         this.mapRows = rows + BORDER_SIZE;
         this.mapColumns = columns + BORDER_SIZE;
         this.grid = new char[mapRows][mapColumns];
         this.entitiesOnGrid = new Entity[mapRows][mapColumns];
+        this.entitiesWithinMap = new ArrayList<>();
         initializeMap();
+
+        if(entities != null){
+            for(Entity entity: entities){
+                placeEntity(entity);
+            }
+        }
+    }
+    public Map(int rows, int columns){
+        this(rows, columns,new ArrayList<>());
+    }
+    public Map(Map source){
+        this(source.mapRows,source.mapColumns,source.getEntities());
     }
 
     private void initializeMap(){
@@ -86,11 +95,16 @@ public class Map {
             System.out.println();
         }
     }
-    public void placeEntity(Entity entity, int row, int col) {
-        if (canPlaceEntityOnMap(entity, row, col)) {
-            entity.getPosition().set(row, col);
-            addEntity(entity);
-            //grid[row][col] = entity.getSprite(); // inline, controlled
+    public void placeEntity(Entity entity) {
+        Position pos = entity.getPosition();
+
+        if(!canPlaceEntityOnMap(entity, entity.getPosition().getRow(),entity.getPosition().getColumn())){
+            System.out.println("failed to place " + entity.getName());
+            return;
+        }
+        entitiesOnGrid[pos.getRow()][pos.getColumn()] = entity;
+        if(!entitiesWithinMap.contains(entity)){
+            entitiesWithinMap.add(entity);
         }
     }
     public MoveResult moveEntity(Entity entity, Direction direction) {
@@ -183,10 +197,11 @@ public class Map {
     }
 
 
-    private void addEntity(Entity entity) {
-        Position pos = entity.getPosition();
-        entitiesOnGrid[pos.getRow()][pos.getColumn()] = entity;
-    }
+//    public void addEntity(Entity entity) {
+//        placeEntity(entity);
+//        entitiesOnGrid[entity.getPosition().getRow()][entity.getPosition().getColumn()] = entity;
+//        this.entitiesWithinMap.add(entity);
+//    }
     public void printEntities(){
         System.out.println("Entities are at:");
         for(int i = 0; i < this.entitiesOnGrid.length;i++){
@@ -242,5 +257,11 @@ public class Map {
         if (entitiesOnGrid[row][col] == entity) {
             entitiesOnGrid[row][col] = null;
         }
+    }
+    public Entity getEntity(int i){
+        return this.entitiesWithinMap.get(i);
+    }
+    public List<Entity> getEntities(){
+        return this.entitiesWithinMap;
     }
 }
